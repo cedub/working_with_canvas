@@ -13,19 +13,56 @@ var layer = new Kinetic.Layer();
  ** Add a Landscape **
  *********************/
 
-var bgImg = new Image();
-bgImg.onLoad = function () {
-  var bridge = new Kinetic.Image({
-    x: 0,
-    y: 100,
-    image: bgImg,
-    width: 3560,
-    height: 756
+var bg_layer = new Kinetic.Layer();
+
+var bldg_group = new Kinetic.Group({
+  x: 0,
+  y: 0
+});
+var bld_cnt = 0;
+
+bg_layer.add(bldg_group);
+
+var add_new_bldg = function () {
+
+  console.log(bldg_group.getWidth());
+
+  var bldg = new Kinetic.Group({
+    x: bld_cnt*170 + 500,
+    width: 150,
+    height: 250
   });
-  layer.add(bridge);
-  console.log("loaded");
-};
-bgImg.src = 'static/img/bridge-back-1.png';
+
+  var bldg_back = new Kinetic.Rect({
+    x: 0,
+    y: 0,
+    width: 150,
+    height: 250,
+    fill: 'black'
+  });
+
+  bldg.add(bldg_back);
+
+  for (var i=0; i<3; i++) {
+    bldg.add(new Kinetic.Rect({
+      x: (Math.floor((Math.random()*3)) * (48)) + 5,
+      y: i*80 + 5,
+      width: 43,
+      height: 75,
+      fill: 'yellow'
+    }));
+  }
+
+  bld_cnt++;
+
+  var scale = (Math.floor((Math.random()*10)) + 1) * .1;
+  bldg.setScale(scale);
+  bldg.setY(300-parseInt(bldg.getHeight()*scale));
+
+  bldg_group.add(bldg);
+  bg_layer.batchDraw();
+
+}
 
 var line = new Kinetic.Line({
   points: [[0,0], [WIDTH,0]],
@@ -35,7 +72,9 @@ var line = new Kinetic.Line({
   y: 300
 });
 
-layer.add(line);
+bg_layer.add(line);
+
+setInterval(add_new_bldg, 1500);
 
 
 /**********************
@@ -243,6 +282,7 @@ charBlob.start();
  ************************/
 
 // add the layer to the stage
+stage.add(bg_layer);
 stage.add(layer);
 
 
@@ -275,11 +315,13 @@ var move_char_anim = new Kinetic.Animation(function (frame) {
     this.stop();
   }
   if (char_dir == 'right') {
-    charBlob.setX(charBlob.getX()+2);
+    // charBlob.setX(charBlob.getX()+2);
+    bldg_group.setX(bldg_group.getX()-2);
   } else {
-    charBlob.setX(charBlob.getX()-2);
+    // charBlob.setX(charBlob.getX()-2);
+    bldg_group.setX(bldg_group.getX()+2);
   }
-}, layer);
+}, [layer, bg_layer]);
 
 
 $(document).on('keydown', function (e) {
@@ -307,5 +349,4 @@ $(document).on('keydown', function (e) {
       break;
   }
 });
-
 
