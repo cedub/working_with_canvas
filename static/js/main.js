@@ -119,13 +119,26 @@ blob.start();
  ** Character Animation **
  *************************/
 
-var idleAnimation = [{
-    x: 0,
-    y: 3,
-    width: 300,
-    height: 291
-}],
-jumpAnimation = [{
+var idleAnimation = [];
+
+for (var i=0; i<11; i++) {
+  idleAnimation.push({
+      x: 265,
+      y: 290*i + 6,
+      width: 300,
+      height: 291
+  });
+}
+for (var i=10; i>=0; i--) {
+  idleAnimation.push({
+      x: 265,
+      y: 290*i + 6,
+      width: 300,
+      height: 291
+  });
+}
+
+var jumpAnimation = [{
     x: 0,
     y: 3,
     width: 300,
