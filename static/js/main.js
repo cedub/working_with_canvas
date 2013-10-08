@@ -119,7 +119,8 @@ blob.start();
  ** Character Animation **
  *************************/
 
-var idleAnimation = [];
+var idleAnimation = [],
+jumpAnimation = [];
 
 for (var i=0; i<11; i++) {
   idleAnimation.push({
@@ -137,133 +138,15 @@ for (var i=10; i>=0; i--) {
       height: 291
   });
 }
+for (var i=0; i<25; i++) {
+  jumpAnimation.push({
+    x: 0,
+    y: 290*i + 3,
+    width: 300,
+    height: 290
+  });
+}
 
-var jumpAnimation = [{
-    x: 0,
-    y: 3,
-    width: 300,
-    height: 291
-  },{
-    x: 0,
-    y: 293,
-    width: 300,
-    height: 290
-  },{
-    x: 0,
-    y: 583,
-    width: 300,
-    height: 290
-  },{
-    x: 0,
-    y: 873,
-    width: 300,
-    height: 290
-  },{
-    x: 0,
-    y: 1163,
-    width: 300,
-    height: 290
-  },{
-    x: 0,
-    y: 1453,
-    width: 300,
-    height: 290
-  },{
-    x: 0,
-    y: 1743,
-    width: 300,
-    height: 290
-  },{
-    x: 0,
-    y: 2033,
-    width: 300,
-    height: 290
-  },{
-    x: 0,
-    y: 2323,
-    width: 300,
-    height: 290
-  },{
-    x: 0,
-    y: 2613,
-    width: 300,
-    height: 290
-  },{
-    x: 0,
-    y: 2903,
-    width: 300,
-    height: 290
-  },{
-    x: 0,
-    y: 3193,
-    width: 300,
-    height: 290
-  },{
-    x: 0,
-    y: 3483,
-    width: 300,
-    height: 290
-  },{
-    x: 0,
-    y: 3773,
-    width: 300,
-    height: 290
-  },{
-    x: 0,
-    y: 4063,
-    width: 300,
-    height: 290
-  },{
-    x: 0,
-    y: 4353,
-    width: 300,
-    height: 290
-  },{
-    x: 0,
-    y: 4643,
-    width: 300,
-    height: 290
-  },{
-    x: 0,
-    y: 4933,
-    width: 300,
-    height: 290
-  },{
-    x: 0,
-    y: 5223,
-    width: 300,
-    height: 290
-  },{
-    x: 0,
-    y: 5513,
-    width: 300,
-    height: 290
-  },{
-    x: 0,
-    y: 5803,
-    width: 300,
-    height: 290
-  },{
-    x: 0,
-    y: 6673,
-    width: 300,
-    height: 290
-  },{
-    x: 0,
-    y: 6963,
-    width: 300,
-    height: 290
-  },{
-    x: 0,
-    y: 7253,
-    width: 300,
-    height: 290
-  },{
-    x: 0,
-    y: 7543,
-    width: 300,
-    height: 290
-  }];
 var charAnimations = {
   idle: idleAnimation,
   jump: jumpAnimation
