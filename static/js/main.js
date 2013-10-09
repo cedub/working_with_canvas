@@ -13,150 +13,132 @@ var layer = new Kinetic.Layer();
  ** Add a Landscape **
  *********************/
 
+var HORIZON_LINE = 300,
+BLDG_WIDTH = 150,
+BLDG_HEIGHT = 250,
+BLDG_SPACING = 20,
+BLDG_NUM_WINDOWS = 3,
+BLDG_WINDOW_WIDTH = 43,
+BLDG_WINDOW_HEIGHT = 75,
+BLDG_WINDOW_SPACING = 5;
+
+
+// Generate a new layer for the background
 var bg_layer = new Kinetic.Layer();
 
-var bldg_group = new Kinetic.Group({
-  x: 0,
-  y: 0
-});
-var bld_cnt = 0;
-
-bg_layer.add(bldg_group);
-
-var add_new_bldg = function () {
-
-  console.log(bldg_group.getWidth());
-
-  var bldg = new Kinetic.Group({
-    x: bld_cnt*170 + 500,
-    width: 150,
-    height: 250
-  });
-
-  var bldg_back = new Kinetic.Rect({
-    x: 0,
-    y: 0,
-    width: 150,
-    height: 250,
-    fill: 'black'
-  });
-
-  bldg.add(bldg_back);
-
-  for (var i=0; i<3; i++) {
-    bldg.add(new Kinetic.Rect({
-      x: (Math.floor((Math.random()*3)) * (48)) + 5,
-      y: i*80 + 5,
-      width: 43,
-      height: 75,
-      fill: 'yellow'
-    }));
-  }
-
-  bld_cnt++;
-
-  var scale = (Math.floor((Math.random()*10)) + 1) * .1;
-  bldg.setScale(scale);
-  bldg.setY(300-parseInt(bldg.getHeight()*scale));
-
-  bldg_group.add(bldg);
-  bg_layer.batchDraw();
-
-}
-
+// Create a line that spans the WIDTH of the page and add it to our background layer
 var line = new Kinetic.Line({
   points: [[0,0], [WIDTH,0]],
   stroke: 'black',
   strokeWidth: 5,
   x: 0,
-  y: 300
+  y: HORIZON_LINE
 });
-
 bg_layer.add(line);
 
-setInterval(add_new_bldg, 1500);
-
-
-/**********************
- ** Kidney Animation **
- **********************/
-
-var kidneyAnimation = [];
-for (var i=0; i<44; i++){
-  kidneyAnimation.push({
-    x: 0,
-    y: i*139,
-    width: 135,
-    height: 139
-  });
-}
-var animations = {
-  idle: kidneyAnimation
-};
-
-var imageObj = new Image();
-imageObj.src = 'static/img/kidneyDanceSmall.png';
-
-var blob = new Kinetic.Sprite({
-  x: -300,
-  y: 200,
-  image: imageObj,
-  animation: 'idle',
-  animations: animations,
-  frameRate: 20,
-  index: 0,
-  draggable: true
+// Create a building group.  This is where all of the buildings will added (this allows us to animate just this group)
+// Add add the group to the layer
+var bldg_group = new Kinetic.Group({
+  x: 0,
+  y: 0
 });
+bg_layer.add(bldg_group);
 
-// add the shape to the layer
-layer.add(blob);
+// Add 500 buildings to our game
+// For a true side-scroller, we'll want to add/remove these dynamically.
+// But for today's purposes, just slapping 500 on will do.
+for (var j=0; j<100; j++) {
+  var bldgs = bldg_group.getChildren();
 
-// start sprite animation
-blob.start();
+  var bldg = new Kinetic.Group({
+    x: j*(BLDG_WIDTH+BLDG_SPACING),
+    height: BLDG_HEIGHT
+  });
 
+  var bldg_back = new Kinetic.Rect({
+    x: 0,
+    y: 0,
+    width: BLDG_WIDTH,
+    height: BLDG_HEIGHT,
+    fill: 'black'
+  });
+
+  bldg.add(bldg_back);
+
+  for (var i=0; i<BLDG_NUM_WINDOWS; i++) {
+    bldg.add(new Kinetic.Rect({
+      x: (Math.floor((Math.random()*BLDG_NUM_WINDOWS)) * (BLDG_WINDOW_WIDTH+BLDG_WINDOW_SPACING)) + BLDG_WINDOW_SPACING,
+      y: i*(BLDG_WINDOW_HEIGHT+BLDG_WINDOW_SPACING) + BLDG_WINDOW_SPACING,
+      width: BLDG_WINDOW_WIDTH,
+      height: BLDG_WINDOW_HEIGHT,
+      fill: 'yellow'
+    }));
+  }
+
+  var scale = (Math.floor((Math.random()*3)) + 7) * .1;
+  bldg.setScale(scale);
+  bldg.setY(HORIZON_LINE-parseInt(bldg.getHeight()*scale));
+
+  bldg_group.add(bldg);
+
+}
 
 /**************************
  ** Character Animation **
  *************************/
 
+var HERO_HEIGHT = 290,
+HERO_WIDTH = 300,
+HERO_PLACEMENT_X = 265;
+
+// Animation Sequences
 var idleAnimation = [],
+walkAnimation = [],
 jumpAnimation = [];
 
+idleAnimation = [{
+    x: HERO_PLACEMENT_X,
+    y: 6,
+    width: HERO_WIDTH,
+    height: HERO_HEIGHT
+}];
+
 for (var i=0; i<11; i++) {
-  idleAnimation.push({
-      x: 265,
-      y: 290*i + 6,
-      width: 300,
-      height: 291
+  walkAnimation.push({
+      x: HERO_PLACEMENT_X,
+      y: HERO_HEIGHT*i + 6,
+      width: HERO_WIDTH,
+      height: HERO_HEIGHT
   });
 }
 for (var i=10; i>=0; i--) {
-  idleAnimation.push({
-      x: 265,
-      y: 290*i + 6,
-      width: 300,
-      height: 291
+  walkAnimation.push({
+      x: HERO_PLACEMENT_X,
+      y: HERO_HEIGHT*i + 6,
+      width: HERO_WIDTH,
+      height: HERO_HEIGHT
   });
 }
 for (var i=0; i<25; i++) {
   jumpAnimation.push({
     x: 0,
-    y: 290*i + 3,
-    width: 300,
-    height: 290
+    y: HERO_HEIGHT*i + 3,
+    width: HERO_WIDTH,
+    height: HERO_HEIGHT
   });
 }
 
 var charAnimations = {
   idle: idleAnimation,
+  walk: walkAnimation,
   jump: jumpAnimation
 };
 
 var charObj = new Image();
 charObj.src = 'static/img/jump.png';
 
-var charBlob = new Kinetic.Sprite({
-  x: 290,
+var heroBlob = new Kinetic.Sprite({
+  x: HERO_PLACEMENT_X,
   y: 200,
   image: charObj,
   animation: 'idle',
@@ -167,21 +149,61 @@ var charBlob = new Kinetic.Sprite({
 });
 
 // add the shape to the layer
-layer.add(charBlob);
+layer.add(heroBlob);
 
 // start sprite animation
-charBlob.start();
+heroBlob.start();
+
+/**********************
+ ** Enemy Animation **
+ **********************/
+
+var enemyAnimation = [];
+for (var i=0; i<44; i++){
+  enemyAnimation.push({
+    x: 0,
+    y: i*139,
+    width: 135,
+    height: 139
+  });
+}
+var animations = {
+  idle: enemyAnimation
+};
+
+var imageObj = new Image();
+imageObj.src = 'static/img/kidneyDanceSmall.png';
+
+var createEnemy = function () {
+  return new Kinetic.Sprite({
+    x: WIDTH+300,
+    y: 300,
+    image: imageObj,
+    animation: 'idle',
+    animations: animations,
+    frameRate: 20,
+    index: 0,
+    draggable: true
+  });
+}
+
+var enemyBlob = createEnemy();
+
+// add the shape to the layer
+layer.add(enemyBlob);
+
+// start sprite animation
+enemyBlob.start();
 
 
-/*****************
- ** Add Bullets **
- *****************/
-
+// /*****************
+//  ** Add Bullets **
+//  *****************/
 
 var launchBullet = function () {
   var bullet = new Kinetic.Circle({
-    x: charBlob.getX() + 140,
-    y: charBlob.getY() + 117,
+    x: heroBlob.getX() + 140,
+    y: heroBlob.getY() + 117,
     radius: 5,
     fill: 'black'
   });
@@ -190,9 +212,16 @@ var launchBullet = function () {
 
   var fire = new Kinetic.Animation(function (frame) {
       bullet.setX(bullet.getX()+5);
-        console.log(detectCollision(bullet, blob));
-      if (bullet.getX() > WIDTH + 50) {
-        this.stop();
+      if (detectCollision(bullet, enemyBlob)) {
+        enemyBlob.destroy();
+        bullet.destroy();
+        enemyBlob = createEnemy();
+        layer.add(enemyBlob);
+        enemyBlob.start();
+      } else {
+        if (bullet.getX() > WIDTH + 50) {
+          this.stop();
+        }
       }
   }, layer);
  
@@ -211,7 +240,9 @@ var detectCollision = function (bullet, character) {
 
     var distance = Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
 
-    return distance;
+    console.log(distance);
+
+    return distance <= 25;
     // return (distance <= (sprite1Radius + sprite2Radius));
 }
 
@@ -225,70 +256,36 @@ stage.add(bg_layer);
 stage.add(layer);
 
 
-/********************
- ** Move Character **
- ********************/
+// /******************
+//  ** Add Controls **
+//  ******************/
 
-var dir = 'right';
-var move_anim = new Kinetic.Animation(function (frame) {
-  if (blob.getX() >=  WIDTH/2) {
-    this.stop();
-  }
-  if (dir == 'right') {
-    blob.setX(blob.getX()+2);
-  } else {
-    blob.setX(blob.getX()-2);
-  }
-}, layer);
-
-move_anim.start();
-
-
-/******************
- ** Add Controls **
- ******************/
-
-var char_dir = 'right';
 var move_char_anim = new Kinetic.Animation(function (frame) {
-  if (charBlob.getX() > WIDTH-40 || charBlob.getX() <= 10) {
-    this.stop();
-  }
-  if (char_dir == 'right') {
-    // charBlob.setX(charBlob.getX()+2);
-    bldg_group.setX(bldg_group.getX()-2);
-  } else {
-    // charBlob.setX(charBlob.getX()-2);
-    bldg_group.setX(bldg_group.getX()+2);
-  }
+  bldg_group.setX(bldg_group.getX()-2);
+  enemyBlob.setX(enemyBlob.getX()-2);
 }, [layer, bg_layer]);
 
 
 $(document).on('keydown', function (e) {
   e.preventDefault();
   switch (e.keyCode) {
-    case 40:
-      alert('down');
-      break;
     case 38:
-      charBlob.setAnimation('jump');
-      charBlob.afterFrame(24, function () {
-        charBlob.setAnimation('idle');
+      heroBlob.setAnimation('jump');
+      heroBlob.afterFrame(24, function () {
+        heroBlob.setAnimation('idle');
       })
-      console.log('up');
       break;
     case 37:
-      char_dir = 'left';
-      move_char_anim.start();
-      console.log('left');
+      move_char_anim.stop();
+      heroBlob.setAnimation('idle');
       break;
     case 39:
-      char_dir = 'right';
+      heroBlob.setAnimation('walk');
       move_char_anim.start();
-      console.log('right');
       break;
     case 32:
-      console.log('bang!');
       launchBullet();
+      break;
   }
 });
 
