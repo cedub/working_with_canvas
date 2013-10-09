@@ -173,6 +173,49 @@ layer.add(charBlob);
 charBlob.start();
 
 
+/*****************
+ ** Add Bullets **
+ *****************/
+
+
+var launchBullet = function () {
+  var bullet = new Kinetic.Circle({
+    x: charBlob.getX() + 140,
+    y: charBlob.getY() + 117,
+    radius: 5,
+    fill: 'black'
+  });
+
+  layer.add(bullet);
+
+  var fire = new Kinetic.Animation(function (frame) {
+      bullet.setX(bullet.getX()+5);
+        console.log(detectCollision(bullet, blob));
+      if (bullet.getX() > WIDTH + 50) {
+        this.stop();
+      }
+  }, layer);
+ 
+  fire.start();
+
+}
+
+var detectCollision = function (bullet, character) {
+
+    var width = character.getWidth(),
+    height = character.getHeight();
+
+    //Distances
+    var distanceX = (bullet.getWidth()/2 + bullet.getX()) - ((character.getWidth()/2) + character.getX());
+    var distanceY = (bullet.getHeight()/2 + bullet.getY()) - ((character.getHeight()/2) + character.getY());
+
+    var distance = Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
+
+    return distance;
+    // return (distance <= (sprite1Radius + sprite2Radius));
+}
+
+
 /************************
  ** Add layer to stage **
  ************************/
@@ -243,6 +286,9 @@ $(document).on('keydown', function (e) {
       move_char_anim.start();
       console.log('right');
       break;
+    case 32:
+      console.log('bang!');
+      launchBullet();
   }
 });
 
